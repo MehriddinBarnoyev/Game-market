@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -48,7 +48,7 @@ const users: Chat[] = [
   },
 ];
 
-export default function ChatsPage() {
+function ChatsPageContent() {
   const [chats, setChats] = useState<Chat[]>(users);
   const [searchTerm, setSearchTerm] = useState("");
   const [chatMessages, setChatMessages] = useState<{
@@ -175,7 +175,7 @@ export default function ChatsPage() {
             <div
               key={chat.id}
               className={`flex items-center gap-3 p-4 hover:bg-gray-800 cursor-pointer ${
-                selectedChatId === chat.id.toString() ? "bg-gray-800" : ""
+                selectedChatId === chat.id.toString() ? "bg-black" : ""
               }`}
               onClick={() => handleChatClick(chat)}
             >
@@ -252,6 +252,14 @@ export default function ChatsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ChatsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ChatsPageContent />
+    </Suspense>
   );
 }
 

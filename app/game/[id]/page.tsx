@@ -114,7 +114,7 @@ export default function GameDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-black text-white">
       {/* Hero Section */}
       <motion.div 
         initial={{ opacity: 0 }}
@@ -143,8 +143,8 @@ export default function GameDetailPage() {
 
       {/* Game Details */}
       <div className="container mx-auto px-4 py-12">
-        <Button onClick={() => router.back()} className="mb-8 bg-gray-800 hover:bg-gray-700">
-          <ChevronLeft className="mr-2 h-4 w-4 text-white" /> Back to Games
+        <Button onClick={() => router.back()} className="mb-8 bg-black hover:bg-gray-700 text-white">
+          <ChevronLeft className="mr-2 h-4 w-4 " /> Back to Games
         </Button>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
@@ -155,12 +155,12 @@ export default function GameDetailPage() {
             className="md:col-span-2"
           >
             <Tabs defaultValue="about" className="w-full">
-              <TabsList className="bg-gray-800 mb-4">
+              <TabsList className="bg-black mb-4">
                 <TabsTrigger value="about">About</TabsTrigger>
                 <TabsTrigger value="requirements">System Requirements</TabsTrigger>
               </TabsList>
               <TabsContent value="about">
-                <Card className="bg-gray-800 border-gray-700">
+                <Card className="bg-black border-gray-700">
                   <CardContent className="p-6">
                     <h2 className="text-3xl font-bold mb-4">About the Game</h2>
                     <p className="text-gray-300 leading-relaxed text-lg">{game.description}</p>
@@ -168,7 +168,7 @@ export default function GameDetailPage() {
                 </Card>
               </TabsContent>
               <TabsContent value="requirements">
-                <Card className="bg-gray-800 border-gray-700">
+                <Card className="bg-black border-gray-700">
                   <CardContent className="p-6">
                     <h2 className="text-3xl font-bold mb-4">Minimum System Requirements</h2>
                     {game.minimum_system_requirements ? (
@@ -207,7 +207,7 @@ export default function GameDetailPage() {
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
           >
-            <Card className="bg-gray-800 border-gray-700">
+            <Card className="bg-black border-gray-700">
               <CardContent className="p-6">
                 <h3 className="text-2xl font-bold mb-4">Game Info</h3>
                 <div className="space-y-3 text-lg">
@@ -340,7 +340,7 @@ export default function GameDetailPage() {
           className="mb-12"
         >
           <h2 className="text-3xl font-bold mb-6">Game Rating</h2>
-          <div className="bg-gray-800 p-8 rounded-lg">
+          <div className="bg-black p-8 rounded-lg">
             <div className="flex items-center mb-6">
               <Star className="text-yellow-400 mr-2 h-8 w-8" />
               <span className="text-4xl font-bold">4.5</span>
@@ -400,7 +400,7 @@ export default function GameDetailPage() {
                 whileTap={{ scale: 0.95 }}
               >
                 <Card 
-                  className="bg-gray-800 cursor-pointer overflow-hidden" 
+                  className="bg-black cursor-pointer overflow-hidden" 
                   onClick={() => router.push(`/game/${relatedGame.id}`)}
                 >
                   <div className="relative h-48">

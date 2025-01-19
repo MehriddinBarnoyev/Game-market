@@ -28,7 +28,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-900 text-white">
+    <div className="flex h-screen bg-black text-white">
       <div className="w-1/3 border-r border-gray-800">
         <div className="p-4 bg-yellow-600 text-black flex items-center">
           <AlertTriangle className="mr-2" />

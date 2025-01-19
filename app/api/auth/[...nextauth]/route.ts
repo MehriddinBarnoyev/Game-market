@@ -4,7 +4,7 @@ import axios from 'axios'
 
 const API_URL = 'https://676112646be7889dc35fa055.mockapi.io/users'
 
-const handler = NextAuth({
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -56,7 +56,9 @@ const handler = NextAuth({
   pages: {
     signIn: '/login',
   },
-})
+}
+
+const handler = NextAuth(authOptions)
 
 export { handler as GET, handler as POST }
 

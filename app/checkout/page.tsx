@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -13,6 +13,11 @@ export default function CheckoutPage() {
   const { cartItems, getTotalPrice, completePurchase, clearCart } = useCart()
   const { user, updateBalance } = useAuth()
   const router = useRouter()
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,6 +38,10 @@ export default function CheckoutPage() {
       alert('Недостаточно средств на балансе')
       setIsProcessing(false)
     }
+  }
+
+  if (!isClient) {
+    return <GamerLoader />
   }
 
   if (!user) {

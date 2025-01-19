@@ -52,7 +52,7 @@ export default function GamerChatPage() {
 
   return (
     <div className="min-h-screen bg-black text-white p-4">
-      <Card className="bg-gray-800 mb-4">
+      <Card className="bg-black mb-4">
         <CardHeader>
           <CardTitle className="flex items-center gap-4">
             <Avatar className="h-12 w-12">

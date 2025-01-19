@@ -111,7 +111,7 @@ export function ChatArea({ chatId }: ChatAreaProps) {
         <AlertTriangle className="mr-2" />
         <span>Warning: This is a demo chat. Do not share sensitive information.</span>
       </div>
-      <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
+      <ScrollArea className="flex-1 p-4 bg-black" ref={scrollAreaRef}>
         {messages.map((message) => (
           <div
             key={message.id}
@@ -138,13 +138,13 @@ export function ChatArea({ chatId }: ChatAreaProps) {
           </div>
         ))}
       </ScrollArea>
-      <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-700 flex">
+      <form onSubmit={handleSendMessage} className="border-t border-gray-900 flex">
         <Input
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type a message..."
-          className="flex-1 mr-2 bg-gray-700 text-white border-gray-600"
+          className="flex-1 mr-2 bg-black text-white border-gray-600"
         />
         <Button type="submit" disabled={isSending}>
           <Send className="h-4 w-4" />

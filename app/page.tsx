@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import axios from 'axios'
 import { GameCard } from './components/game-card'
@@ -31,7 +31,7 @@ function generatePrice() {
 
 const GAMES_PER_PAGE = 20
 
-export default function Home() {
+function HomePageContent() {
   const [games, setGames] = useState<Game[]>([])
   const [displayedGames, setDisplayedGames] = useState<Game[]>([])
   const [categories, setCategories] = useState<string[]>([])
@@ -151,6 +151,14 @@ export default function Home() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomePageContent />
+    </Suspense>
   )
 }
 
