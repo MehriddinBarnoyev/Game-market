@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2 } from 'lucide-react'
-import axios from 'axios'
+import { useAuth } from '../contexts/AuthContext'
 
 export default function RegisterPage() {
   const [username, setUsername] = useState('')
@@ -16,16 +16,15 @@ export default function RegisterPage() {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  const { register } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setIsLoading(true)
     try {
-      const response = await axios.post('/api/auth/register', { username, email, password })
-      if (response.status === 201) {
-        router.push('/login')
-      }
+      await register(username, email, password)
+      router.push('/profile')
     } catch (err) {
       setError('Registration failed. Please try again.')
     } finally {
@@ -48,7 +47,7 @@ export default function RegisterPage() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                className="bg-gray-700 text-white border-gray-600"
+                className="bg-gray-700 text-white border-gray-900"
               />
               <Input
                 type="email"
@@ -56,7 +55,7 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-gray-700 text-white border-gray-600"
+                className="bg-gray-700 text-white border-gray-900"
               />
               <Input
                 type="password"
@@ -64,7 +63,7 @@ export default function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="bg-gray-700 text-white border-gray-600"
+                className="bg-gray-700 text-white border-gray-900"
               />
               {error && <p className="text-red-500">{error}</p>}
               <Button type="submit" className="w-full" disabled={isLoading}>

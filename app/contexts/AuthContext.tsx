@@ -16,7 +16,7 @@ type AuthContextType = {
   login: (email: string, password: string) => Promise<void>
   logout: () => void
   register: (username: string, email: string, password: string) => Promise<void>
-  updateBalance: (amount: number) => void
+  updateBalance: (amount: number) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -35,12 +35,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const response = await axios.get('https://676112646be7889dc35fa055.mockapi.io/users')
       const users = response.data
-      const foundUser = users.find((u: User) => u.email === email)
+      const foundUser = users.find((u: any) => u.email === email)
       
       if (foundUser) {
-        const userWithBalance = { ...foundUser, balance: foundUser.balance || 0 }
-        setUser(userWithBalance)
-        localStorage.setItem('user', JSON.stringify(userWithBalance))
+        setUser(foundUser)
+        localStorage.setItem('user', JSON.stringify(foundUser))
       } else {
         throw new Error('Invalid email or password')
       }
@@ -73,11 +72,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }
 
-  const updateBalance = (amount: number) => {
-    if (user) {
-      const updatedUser = { ...user, balance: user.balance + amount }
+  const updateBalance = async (amount: number) => {
+    if (!user) return
+
+    try {
+      const updatedBalance = user.balance + amount
+      const response = await axios.put(`https://676112646be7889dc35fa055.mockapi.io/users/${user.id}`, {
+        ...user,
+        balance: updatedBalance
+      })
+      
+      const updatedUser = response.data
       setUser(updatedUser)
       localStorage.setItem('user', JSON.stringify(updatedUser))
+    } catch (error) {
+      console.error('Error updating balance:', error)
+      throw error
     }
   }
 

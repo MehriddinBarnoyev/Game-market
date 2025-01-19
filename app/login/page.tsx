@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2 } from 'lucide-react'
-import { signIn } from 'next-auth/react'
+import { useAuth } from '../contexts/AuthContext'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -15,25 +15,17 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  const { login } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setIsLoading(true)
     try {
-      const result = await signIn('credentials', {
-        redirect: false,
-        email,
-        password,
-      })
-
-      if (result?.error) {
-        setError('Invalid email or password')
-      } else {
-        router.push('/games')
-      }
+      await login(email, password)
+      router.push('/profile')
     } catch (err) {
-      setError('An error occurred. Please try again.')
+      setError('Invalid email or password')
     } finally {
       setIsLoading(false)
     }

@@ -6,29 +6,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import {
-  Menu,
-  Share2,
-  Star,
-  ChevronRight,
-  LogOut,
-  ShoppingCart,
-  Plus,
-  History,
-} from "lucide-react";
+import { LogOut, Plus } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../contexts/CartContext";
 import { GamerLoader } from "../components/gamer-loader";
-import { GameComponentPayment } from "@/components/GameComponentPayment";
-
-function formatDate(dateString: string) {
-  return new Date(dateString).toLocaleDateString("ru-RU", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
 
 export default function ProfilePage() {
   const { user, logout } = useAuth();
@@ -63,14 +45,12 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-800">
         <div className="flex items-center gap-2">
           <h1 className="text-2xl font-bold">{user.username}</h1>
         </div>
       </div>
 
-      {/* Balance Card */}
       <Card className="mx-4 mt-4 bg-black border-gray-700">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
@@ -91,23 +71,20 @@ export default function ProfilePage() {
                 </svg>
               </div>
               <div>
-                <p className="text-sm text-gray-400">Баланс</p>
-                <span className="text-2xl font-bold">{`${
-                  user ? user.balance : 0
-                } ₽`}</span>
+                <p className="text-sm text-gray-400">Balance</p>
+                <span className="text-2xl font-bold">{user.balance} ₽</span>
               </div>
             </div>
             <Link href="/topup">
               <Button variant="outline" size="sm">
                 <Plus className="h-4 w-4 mr-2" />
-                Пополнить
+                Top Up
               </Button>
             </Link>
           </div>
         </CardContent>
       </Card>
 
-      {/* Profile Info */}
       <div className="p-4 flex items-center gap-4">
         <Avatar className="h-20 w-20 border-2 border-blue-500">
           <AvatarImage
@@ -119,38 +96,23 @@ export default function ProfilePage() {
         </Avatar>
         <div>
           <h2 className="text-2xl font-bold">{user.username}</h2>
-          <div className="flex items-center gap-1 text-gray-400 text-sm mt-1">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <Star key={star} className="w-4 h-4 fill-current text-gray-600" />
-            ))}
-            <span className="ml-1">нет отзывов</span>
-          </div>
-          <p className="text-sm text-gray-400 mt-1">
-            на Playerok с ноября 2024
-          </p>
+          <p className="text-sm text-gray-400">{user.email}</p>
         </div>
       </div>
 
-      {/* Tabs */}
       <Tabs defaultValue="cart" className="w-full mt-4">
         <TabsList className="w-full justify-start gap-2 bg-gray-800 p-1 rounded-lg">
           <TabsTrigger
             value="cart"
             className="flex-1 py-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded"
           >
-            Корзина {cartItems.length}
+            Cart ({cartItems.length})
           </TabsTrigger>
           <TabsTrigger
             value="history"
             className="flex-1 py-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded"
           >
-            История покупок
-          </TabsTrigger>
-          <TabsTrigger
-            value="components"
-            className="flex-1 py-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded"
-          >
-            Игровые компоненты
+            Purchase History
           </TabsTrigger>
         </TabsList>
 
@@ -158,13 +120,13 @@ export default function ProfilePage() {
           {cartItems.length === 0 ? (
             <EmptyState
               emoji="🛒"
-              title="Корзина пуста"
-              description="Добавьте товары в корзину"
-              buttonText="Выбрать игру/приложение"
+              title="Cart is empty"
+              description="Add some items to your cart"
+              buttonText="Browse Games"
               buttonHref="/"
             />
           ) : (
-            <div className="space-y-4 p-4 ">
+            <div className="space-y-4 p-4">
               {cartItems.map((item) => (
                 <Card key={item.id} className="bg-black border-gray-700">
                   <CardContent className="p-4 flex items-center gap-4">
@@ -184,31 +146,24 @@ export default function ProfilePage() {
                 </Card>
               ))}
               <div className="flex justify-between items-center mt-4">
-                <span className="text-xl font-bold">Итого:</span>
+                <span className="text-xl font-bold">Total:</span>
                 <span className="text-xl font-bold">{getTotalPrice()} ₽</span>
               </div>
-              <div className="text-center">
-              <Link href="/checkout" className="">
-                <Button className="w-30   bg-blue-600 hover:bg-blue-700 text-white mt-10">
-                  Перейти к оплате
+              <Link href="/checkout">
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white mt-4">
+                  Proceed to Checkout
                 </Button>
               </Link>
-              </div>
             </div>
           )}
         </TabsContent>
 
-        <TabsContent value="history" className="mt-10 text-center">
+        <TabsContent value="history" className="mt-4 text-center">
           <Link href="/history">
-            <Button className="w-30  bg-blue-600 hover:bg-blue-700 text-white">
-              <History className="mr-2 h-4 w-4" />
-              Просмотреть историю покупок
+            <Button className="w-30 bg-blue-600 hover:bg-blue-700 text-white">
+              View Purchase History
             </Button>
           </Link>
-        </TabsContent>
-
-        <TabsContent value="components" className="mt-4">
-          <GameComponentPayment />
         </TabsContent>
       </Tabs>
     </div>

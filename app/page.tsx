@@ -47,8 +47,9 @@ function HomePageContent() {
   const fetchGames = useCallback(async () => {
     try {
       const response = await axios.get('/api/games')
-      setGames(response.data)
-      const uniqueCategories = Array.from(new Set(response.data.map((game: Game) => game.genre)))
+      const fetchedGames = response.data
+      setGames(fetchedGames)
+      const uniqueCategories = Array.from(new Set(fetchedGames.map((game: Game) => game.genre)))
       setCategories(uniqueCategories)
     } catch (error) {
       console.error('Error fetching games:', error)
@@ -59,8 +60,22 @@ function HomePageContent() {
   }, [])
 
   useEffect(() => {
-    fetchGames()
-  }, [fetchGames])
+    const fetchData = async () => {
+      if (searchQuery) {
+        try {
+          const response = await axios.get(`/api/search?q=${searchQuery}`)
+          setGames(response.data)
+        } catch (error) {
+          console.error('Error fetching search results:', error)
+          setError('Failed to load search results')
+        }
+      } else {
+        await fetchGames()
+      }
+    }
+
+    fetchData()
+  }, [searchQuery, fetchGames])
 
   const filterGames = useCallback(() => {
     return games.filter(game => 
