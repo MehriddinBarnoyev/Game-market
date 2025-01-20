@@ -1,20 +1,19 @@
-'use client'
+"use client"
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { ShoppingCart, User, Search, MessageCircle } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { useSession, signOut } from 'next-auth/react'
-import { useCart } from '../contexts/CartContext'
-import { useAuth } from '../contexts/AuthContext'
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { ShoppingCart, User, Search, MessageCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { useCart } from "../contexts/CartContext"
+import { useAuth } from "../contexts/AuthContext"
 
 export function Header() {
   const [cartCount, setCartCount] = useState(0)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState("")
   const router = useRouter()
-  const { user, logout } = useAuth()
+  const { user, logout, isAdmin } = useAuth()
   const { getCartCount } = useCart()
 
   useEffect(() => {
@@ -30,7 +29,7 @@ export function Header() {
 
   const handleLogout = () => {
     logout()
-    router.push('/login')
+    router.push("/login")
   }
 
   return (
@@ -59,7 +58,7 @@ export function Header() {
           </Link>
           {user && (
             <>
-              <Link href="/chats" className="text-gray-300 hover:text-white relative">
+              <Link href="/chat" className="text-gray-300 hover:text-white relative">
                 <MessageCircle className="h-5 w-5" />
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   0
@@ -75,16 +74,28 @@ export function Header() {
                   </span>
                 )}
               </Link>
-              <Button variant="ghost" size="icon" className="text-gray-300 hover:text-white" onClick={() => router.push('/profile')}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-gray-300 hover:text-white"
+                onClick={() => router.push("/profile")}
+              >
                 <User className="h-5 w-5" />
               </Button>
+              {isAdmin() && (
+                <Link href="/admin">
+                  <Button variant="ghost" className="text-gray-300 hover:text-white">
+                    Admin
+                  </Button>
+                </Link>
+              )}
               <Button variant="ghost" onClick={handleLogout} className="text-gray-300 hover:text-white">
                 Logout
               </Button>
             </>
           )}
           {!user && (
-            <Button variant="ghost" onClick={() => router.push('/login')} className="text-gray-300 hover:text-white">
+            <Button variant="ghost" onClick={() => router.push("/login")} className="text-gray-300 hover:text-white">
               Login
             </Button>
           )}

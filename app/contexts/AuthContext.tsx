@@ -1,13 +1,14 @@
-'use client'
+"use client"
 
-import React, { createContext, useState, useContext, useEffect } from 'react'
-import axios from 'axios'
+import type React from "react"
+import { createContext, useState, useContext, useEffect } from "react"
+import axios from "axios"
 
 type User = {
   id: string
   username: string
   email: string
-  role: 'user' | 'admin'
+  role: "user" | "admin"
   balance: number
 } | null
 
@@ -17,6 +18,7 @@ type AuthContextType = {
   logout: () => void
   register: (username: string, email: string, password: string) => Promise<void>
   updateBalance: (amount: number) => Promise<void>
+  isAdmin: () => boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -25,7 +27,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User>(null)
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('user')
+    const savedUser = localStorage.getItem("user")
     if (savedUser) {
       setUser(JSON.parse(savedUser))
     }
@@ -33,41 +35,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await axios.get('https://676112646be7889dc35fa055.mockapi.io/users')
+      const response = await axios.get("https://676112646be7889dc35fa055.mockapi.io/users")
       const users = response.data
       const foundUser = users.find((u: any) => u.email === email)
-      
+
       if (foundUser) {
         setUser(foundUser)
-        localStorage.setItem('user', JSON.stringify(foundUser))
+        localStorage.setItem("user", JSON.stringify(foundUser))
       } else {
-        throw new Error('Invalid email or password')
+        throw new Error("Invalid email or password")
       }
     } catch (error) {
-      console.error('Login error:', error)
+      console.error("Login error:", error)
       throw error
     }
   }
 
   const logout = () => {
     setUser(null)
-    localStorage.removeItem('user')
+    localStorage.removeItem("user")
   }
 
   const register = async (username: string, email: string, password: string) => {
     try {
-      const response = await axios.post('https://676112646be7889dc35fa055.mockapi.io/users', {
+      const response = await axios.post("https://676112646be7889dc35fa055.mockapi.io/users", {
         username,
         email,
         password,
-        role: 'user',
-        balance: 0
+        role: "user",
+        balance: 0,
       })
       const newUser = response.data
       setUser(newUser)
-      localStorage.setItem('user', JSON.stringify(newUser))
+      localStorage.setItem("user", JSON.stringify(newUser))
     } catch (error) {
-      console.error('Registration error:', error)
+      console.error("Registration error:", error)
       throw error
     }
   }
@@ -79,20 +81,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const updatedBalance = user.balance + amount
       const response = await axios.put(`https://676112646be7889dc35fa055.mockapi.io/users/${user.id}`, {
         ...user,
-        balance: updatedBalance
+        balance: updatedBalance,
       })
-      
+
       const updatedUser = response.data
       setUser(updatedUser)
-      localStorage.setItem('user', JSON.stringify(updatedUser))
+      localStorage.setItem("user", JSON.stringify(updatedUser))
     } catch (error) {
-      console.error('Error updating balance:', error)
+      console.error("Error updating balance:", error)
       throw error
     }
   }
 
+  const isAdmin = () => {
+    return user?.email === "barnoyevmehriddin77@gmail.com"
+  }
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, register, updateBalance }}>
+    <AuthContext.Provider value={{ user, login, logout, register, updateBalance, isAdmin }}>
       {children}
     </AuthContext.Provider>
   )
@@ -101,7 +107,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export const useAuth = () => {
   const context = useContext(AuthContext)
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider')
+    throw new Error("useAuth must be used within an AuthProvider")
   }
   return context
 }

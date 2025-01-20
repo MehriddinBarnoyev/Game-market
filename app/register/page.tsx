@@ -34,7 +34,7 @@ export default function RegisterPage() {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-black">
-      <Card className="w-full max-w-md bg-black text-white">
+      <Card className="w-full max-w-md bg-black text-white border-gray-600 rounded-2xl">
         <CardHeader>
           <CardTitle>Register</CardTitle>
         </CardHeader>
