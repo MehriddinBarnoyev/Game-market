@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Loader2 } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 interface User {
   id: string
@@ -13,21 +14,22 @@ interface User {
   email: string
   balance: number
   createdAt: string
+  isAdmin?: boolean
 }
 
 export default function ManageUsers() {
   const [users, setUsers] = useState<User[]>([])
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
-  const [page, setPage] = useState(1)
-  const [limit, setLimit] = useState(10)
   const [searchTerm, setSearchTerm] = useState("")
 
   useEffect(() => {
     const loadUsers = async () => {
       setLoading(true)
       try {
-        const fetchedUsers = await fetchUsers(page,limit)
+        const fetchedUsers = await fetchUsers()
         setUsers(fetchedUsers)
+        setFilteredUsers(fetchedUsers)
       } catch (error) {
         console.error("Failed to fetch users:", error)
       } finally {
@@ -36,79 +38,78 @@ export default function ManageUsers() {
     }
 
     loadUsers()
-  }, [page, limit])
+  }, [])
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  useEffect(() => {
+    const filtered = users.filter(
+      (user) =>
+        user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase()),
+    )
+    setFilteredUsers(filtered)
+  }, [searchTerm, users])
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Manage Users</h1>
+    <div className="space-y-6">
+      <h1 className="text-2xl md:text-3xl font-bold text-gray-100">Manage Users</h1>
 
-      <div className="mb-4">
-        <Input
-          type="text"
-          placeholder="Search users..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-sm"
-        />
-      </div>
+      <Card className="bg-black border-gray-700">
+        <CardHeader>
+          <CardTitle className="text-gray-100">User Search</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Input
+            type="text"
+            placeholder="Search users..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="max-w-sm bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400"
+          />
+        </CardContent>
+      </Card>
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin" />
+          <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
         </div>
       ) : (
-        <>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>#</TableHead>
-                  <TableHead>Username</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Balance</TableHead>
-                  <TableHead>Joined</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredUsers.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell>{user.id}</TableCell>
-                    <TableCell className="font-medium">{user.username}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>${user.balance}</TableCell>
-                    <TableCell>{new Date(user.joined_date).toLocaleDateString()}</TableCell>
+        <Card className="bg-black border-gray-700 overflow-hidden">
+          <CardHeader>
+            <CardTitle className="text-gray-100">User List</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-900">
+                    <TableHead className="text-gray-300">Username</TableHead>
+                    <TableHead className="text-gray-300 hidden md:table-cell">Email</TableHead>
+                    <TableHead className="text-gray-300">Balance</TableHead>
+                    <TableHead className="text-gray-300 hidden lg:table-cell">Joined</TableHead>
+                    <TableHead className="text-gray-300">Admin</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                </TableHeader>
+                <TableBody>
+                  {filteredUsers.map((user) => (
+                    <TableRow key={user.id} className="border-gray-700">
+                      <TableCell className="font-medium text-gray-100">{user.username}</TableCell>
+                      <TableCell className="text-gray-300 hidden md:table-cell">{user.email}</TableCell>
+                      <TableCell className="text-gray-300">${user.balance}</TableCell>
+                      <TableCell className="text-gray-300 hidden lg:table-cell">
+                        {new Date(user.createdAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="text-gray-300">{user.isAdmin ? "Yes" : "No"}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
-          <div className="mt-4 flex justify-between items-center">
-            <div>
-              <span className="mr-2">Rows per page:</span>
-              <select value={limit} onChange={(e) => setLimit(Number(e.target.value))} className="border rounded p-1">
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-              </select>
-            </div>
-            <div>
-              <Button onClick={() => setPage((prev) => Math.max(prev - 1, 1))} disabled={page === 1} className="mr-2">
-                Previous
-              </Button>
-              <span className="mx-2">Page {page}</span>
-              <Button onClick={() => setPage((prev) => prev + 1)} disabled={users.length < limit}>
-                Next
-              </Button>
-            </div>
-          </div>
-        </>
+      {filteredUsers.length === 0 && !loading && (
+        <p className="text-center mt-4 text-gray-400">No users found matching your search.</p>
       )}
     </div>
   )

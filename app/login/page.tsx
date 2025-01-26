@@ -33,7 +33,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex justify-center   items-center min-h-screen bg-black">
-      <Card className="w-full max-w-md bg-gray-800 text-white rounded-2xl border-gray-800">
+      <Card className="w-full max-w-md bg-black text-white rounded-2xl border-gray-800">
         <CardHeader>
           <CardTitle>Login</CardTitle>
         </CardHeader>
@@ -46,7 +46,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-gray-700 text-white border-gray-600"
+                className="bg-gray-900 text-white border-gray-600"
               />
               <Input
                 type="password"
@@ -54,10 +54,10 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="bg-gray-700 text-white border-gray-600"
+                className="bg-gray-900 text-white border-gray-600"
               />
               {error && <p className="text-red-500">{error}</p>}
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button type="submit" className="w-full text-slate-200" disabled={isLoading}>
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

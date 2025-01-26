@@ -2,18 +2,25 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
 import { useAuth } from "../contexts/AuthContext"
+import { Loader2 } from "lucide-react"
 
-export default function AddProduct() {
-  const [name, setName] = useState("")
-  const [description, setDescription] = useState("")
-  const [price, setPrice] = useState("")
-  const [image, setImage] = useState<File | null>(null)
+export default function AddGamePage() {
+  const [formData, setFormData] = useState({
+    game_name: "",
+    description: "",
+    play_game: "",
+    release_date: "",
+    image: "",
+  })
+  const [loading, setLoading] = useState(false)
   const { user } = useAuth()
   const { toast } = useToast()
   const router = useRouter()
@@ -23,91 +30,124 @@ export default function AddProduct() {
     if (!user) {
       toast({
         title: "Error",
-        description: "You must be logged in to add a product",
+        description: "You must be logged in to add a game",
         variant: "destructive",
       })
       return
     }
 
-    const formData = new FormData()
-    formData.append("name", name)
-    formData.append("description", description)
-    formData.append("price", price)
-    if (image) {
-      formData.append("image", image)
-    }
-    formData.append("userId", user.id)
-
+    setLoading(true)
     try {
-      const response = await fetch("/api/products", {
+      const response = await fetch("https://6794f90baad755a134eae279.mockapi.io/game", {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          owner_id: user.id,
+          images: [formData.image],
+        }),
       })
+
       if (response.ok) {
         toast({
           title: "Success",
-          description: "Product added successfully",
+          description: "Game added successfully",
         })
         router.push("/profile")
       } else {
-        throw new Error("Failed to add product")
+        throw new Error("Failed to add game")
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to add product",
+        description: "Failed to add game",
         variant: "destructive",
       })
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
-      <h1 className="text-3xl font-bold mb-6">Add New Product</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <Label htmlFor="name">Product Name</Label>
-          <Input
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            className="bg-gray-800 text-white"
-          />
-        </div>
-        <div>
-          <Label htmlFor="description">Description</Label>
-          <Textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-            className="bg-gray-800 text-white"
-          />
-        </div>
-        <div>
-          <Label htmlFor="price">Price</Label>
-          <Input
-            id="price"
-            type="number"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            required
-            className="bg-gray-800 text-white"
-          />
-        </div>
-        <div>
-          <Label htmlFor="image">Product Image</Label>
-          <Input
-            id="image"
-            type="file"
-            onChange={(e) => setImage(e.target.files?.[0] || null)}
-            className="bg-gray-800 text-white"
-          />
-        </div>
-        <Button type="submit">Add Product</Button>
-      </form>
-    </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="container max-w-2xl mx-auto py-8"
+    >
+      <Card className="bg-black rounded-2xl border-gray-800">
+        <CardHeader>
+          <CardTitle className="text-2xl text-white">Add New Game</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="game_name">Game Name</Label>
+              <Input
+                id="game_name"
+                value={formData.game_name}
+                onChange={(e) => setFormData({ ...formData, game_name: e.target.value })}
+                required
+                className="bg-gray-800 border-gray-700 text-white"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                required
+                className="bg-gray-800 border-gray-700 text-white"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="play_game">Play Game URL</Label>
+              <Input
+                id="play_game"
+                value={formData.play_game}
+                onChange={(e) => setFormData({ ...formData, play_game: e.target.value })}
+                required
+                className="bg-gray-800 border-gray-700 text-white"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="release_date">Release Date</Label>
+              <Input
+                id="release_date"
+                type="date"
+                value={formData.release_date}
+                onChange={(e) => setFormData({ ...formData, release_date: e.target.value })}
+                required
+                className="bg-gray-800 border-gray-700 text-white"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="image">Image URL</Label>
+              <Input
+                id="image"
+                value={formData.image}
+                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                required
+                className="bg-gray-800 border-gray-700 text-white"
+              />
+            </div>
+            <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700" disabled={loading}>
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Adding Game...
+                </>
+              ) : (
+                "Add Game"
+              )}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </motion.div>
   )
 }
 

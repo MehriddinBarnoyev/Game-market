@@ -47,7 +47,7 @@ export default function CartPage() {
                       type="number" 
                       value={item.quantity} 
                       onChange={(e) => updateQuantity(item.id, parseInt(e.target.value))}
-                      className="w-16 text-center bg-gray-700 border-gray-600"
+                      className="w-16 text-center bg-gray-900 border-gray-600"
                     />
                     <Button 
                       variant="outline" 
@@ -76,7 +76,7 @@ export default function CartPage() {
             <p className="text-xl font-bold">Total: ${total.toFixed(2)}</p>
           </div>
           <Button 
-            className="w-full sm:w-auto" 
+            className="w-full sm:w-auto text-sky-200" 
             onClick={() => router.push('/checkout')}
             disabled={cartItems.length === 0}
           >

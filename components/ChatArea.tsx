@@ -126,13 +126,13 @@ export function ChatArea({ chatId }: ChatAreaProps) {
               </Avatar>
             )}
             <div
-              className={`p-2 rounded-lg max-w-[70%] ${
+              className={`p-2  max-w-[70%] ${
                 message.senderId === session?.user?.id
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-700 text-gray-100'
               }`}
             >
-              <p>{message.content}</p>
+              <p className='rounded-2xl'>{message.content} 1</p>
               <p className="text-xs mt-1 opacity-70">{new Date(message.timestamp).toLocaleString()}</p>
             </div>
           </div>

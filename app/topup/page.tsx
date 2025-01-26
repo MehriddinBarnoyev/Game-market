@@ -32,7 +32,7 @@ export default function TopUpPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Card className="max-w-md mx-auto bg-gray-800 text-white">
+      <Card className="max-w-md mx-auto bg-black text-white border-gray-700 rounded-2xl">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Пополнение баланса</CardTitle>
         </CardHeader>
@@ -45,26 +45,26 @@ export default function TopUpPage() {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 required
-                className="bg-gray-700 border-gray-600 text-white"
+                className="bg-gray-900 border-gray-600 text-white"
               />
               <Input
                 type="text"
                 placeholder="Номер карты"
                 required
-                className="bg-gray-700 border-gray-600 text-white"
+                className="bg-gray-900 border-gray-600 text-white"
               />
               <div className="flex gap-4">
                 <Input
                   type="text"
                   placeholder="MM/YY"
                   required
-                  className="bg-gray-700 border-gray-600 text-white"
+                  className="bg-gray-900 border-gray-600 text-white"
                 />
                 <Input
                   type="text"
                   placeholder="CVC"
                   required
-                  className="bg-gray-700 border-gray-600 text-white"
+                  className="bg-gray-900 border-gray-600 text-white"
                 />
               </div>
             </div>
@@ -72,7 +72,7 @@ export default function TopUpPage() {
         </CardContent>
         <CardFooter className="flex flex-col">
           <Button 
-            className="w-full bg-blue-600 hover:bg-blue-700" 
+            className="w-full bg-blue-600 hover:bg-blue-700 text-slate-200" 
             onClick={handleSubmit}
             disabled={isProcessing}
           >
@@ -82,7 +82,7 @@ export default function TopUpPage() {
                 Обработка...
               </>
             ) : (
-              'Пополнить'
+              "Пополнить"
             )}
           </Button>
         </CardFooter>

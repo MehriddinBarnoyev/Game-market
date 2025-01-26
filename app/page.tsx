@@ -48,6 +48,8 @@ function HomePageContent() {
     try {
       const response = await axios.get('/api/games')
       const fetchedGames = response.data
+      console.log('Fetched games:', fetchedGames);
+      
       setGames(fetchedGames)
       const uniqueCategories = Array.from(new Set(fetchedGames.map((game: Game) => game.genre)))
       setCategories(uniqueCategories)

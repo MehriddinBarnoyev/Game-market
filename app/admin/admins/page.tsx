@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { fetchAdmins } from "@/lib/api";
 import {
   Table,
@@ -14,17 +15,27 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Admin {
   id: string;
   username: string;
   email: string;
-  password: string;
   createdAt: string;
+  role: string;
+  balance: number;
+  avatar: string;
+}
+
+interface EmailLog {
+  email: string;
+  otp: string;
+  timestamp: string;
 }
 
 export default function AdminsPage() {
   const [admins, setAdmins] = useState<Admin[]>([]);
+  const [emailLogs, setEmailLogs] = useState<EmailLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [newAdmin, setNewAdmin] = useState<Admin | null>(null);
@@ -35,6 +46,20 @@ export default function AdminsPage() {
       try {
         const fetchedAdmins = await fetchAdmins();
         setAdmins(fetchedAdmins);
+        // In a real app, you would fetch email logs from the server
+        // For this example, we'll use mock data
+        setEmailLogs([
+          {
+            email: "user1@example.com",
+            otp: "123456",
+            timestamp: "2023-06-15T10:30:00Z",
+          },
+          {
+            email: "user2@example.com",
+            otp: "789012",
+            timestamp: "2023-06-15T11:45:00Z",
+          },
+        ]);
       } catch (error) {
         console.error("Failed to fetch admins:", error);
       } finally {
@@ -57,12 +82,25 @@ export default function AdminsPage() {
     }
   }, [admins]);
 
+  const filteredAdmins = admins.filter(
+    (admin) =>
+      admin.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      admin.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Manage Admins</h1>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-6"
+    >
+      <h1 className="text-2xl md:text-3xl font-bold text-gray-100">
+        Manage Admins
+      </h1>
 
       {newAdmin && (
-        <Alert className="mb-4">
+        <Alert className="mb-4 bg-green-900 border-green-800 text-gray-100">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>New Admin Created</AlertTitle>
           <AlertDescription>
@@ -71,9 +109,9 @@ export default function AdminsPage() {
         </Alert>
       )}
 
-      <Card className="mb-6 bg-black border-gray-600 rounded-2xl">
+      <Card className="bg-black border-gray-700">
         <CardHeader>
-          <CardTitle>Admin Search</CardTitle>
+          <CardTitle className="text-gray-100">Admin Search</CardTitle>
         </CardHeader>
         <CardContent>
           <Input
@@ -81,50 +119,80 @@ export default function AdminsPage() {
             placeholder="Search admins..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="max-w-sm"
+            className="max-w-sm bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400"
           />
         </CardContent>
       </Card>
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin" />
+          <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
         </div>
       ) : (
-        <Card className="bg-black border-gray-600 rounded-2xl ">
-          <CardHeader>
-            <CardTitle>Admin List</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Username</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Password</TableHead>
-                    <TableHead>Created At</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {admins.map((admin) => (
-                    <TableRow key={admin.id}>
-                      <TableCell className="font-medium">
-                        {admin.username}
-                      </TableCell>
-                      <TableCell>{admin.email}</TableCell>
-                      <TableCell>{admin.password}</TableCell>
-                      <TableCell>
-                        {new Date(admin.createdAt).toLocaleString()}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
+        <Tabs defaultValue="admins" className="space-y-4">
+          <TabsContent value="admins">
+            <Card className="bg-black border-gray-700">
+              <CardHeader>
+                <CardTitle className="text-gray-100">Admin List</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-gray-700">
+                        <TableHead className="text-gray-300">
+                          Username
+                        </TableHead>
+                        <TableHead className="text-gray-300 hidden md:table-cell">
+                          Email
+                        </TableHead>
+                        <TableHead className="text-gray-300">Role</TableHead>
+                        <TableHead className="text-gray-300 hidden lg:table-cell">
+                          Balance
+                        </TableHead>
+                        <TableHead className="text-gray-300 hidden xl:table-cell">
+                          Created At
+                        </TableHead>
+                        <TableHead className="text-gray-300 hidden sm:table-cell">
+                          Avatar
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredAdmins.map((admin) => (
+                        <TableRow key={admin.id} className="border-gray-700">
+                          <TableCell className="font-medium text-gray-100">
+                            {admin.username}
+                          </TableCell>
+                          <TableCell className="text-gray-300 hidden md:table-cell">
+                            {admin.email}
+                          </TableCell>
+                          <TableCell className="text-gray-300">
+                            {admin.role}
+                          </TableCell>
+                          <TableCell className="text-gray-300 hidden lg:table-cell">
+                            ${admin.balance}
+                          </TableCell>
+                          <TableCell className="text-gray-300 hidden xl:table-cell">
+                            {new Date(admin.createdAt).toLocaleString()}
+                          </TableCell>
+                          <TableCell className="text-gray-300 hidden sm:table-cell">
+                            <img
+                              src={admin.avatar || "/placeholder.svg"}
+                              alt={admin.username}
+                              className="w-8 h-8 rounded-full"
+                            />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       )}
-    </div>
+    </motion.div>
   );
 }
